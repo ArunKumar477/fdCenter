@@ -57,7 +57,8 @@ class ViewShift extends React.Component {
         default: return 'primary'
       }
     }
-    const fields = ['id','leave','date','status']
+
+    const fields = ['Name','HolidayDate','Status','Created']
     return (
       <>
         <CRow>

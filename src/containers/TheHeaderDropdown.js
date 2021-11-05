@@ -8,8 +8,13 @@ import {
   CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { useHistory } from "react-router";
 
 const TheHeaderDropdown = () => {
+const history = useHistory();
+  const LogoutFun =() => {
+   history.push("/");
+  }
   return (
     <CDropdown
       inNav
@@ -80,9 +85,9 @@ const TheHeaderDropdown = () => {
           <CBadge color="primary" className="mfs-auto">42</CBadge>
         </CDropdownItem>
         <CDropdownItem divider />
-        <CDropdownItem>
+        <CDropdownItem onClick={()=>LogoutFun()}>
           <CIcon name="cil-lock-locked" className="mfe-2" />
-          Lock Account
+           Logout
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

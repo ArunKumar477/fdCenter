@@ -18,12 +18,12 @@ class ViewShift extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      shiftData : []
+      leaveRequestDash : []
     }
   }
 
   getShiftTable = async () => {
-    let subURl = "requests.php?type=viewLeaveRequest";
+    let subURl = "requests.php?type=viewLeaveRequestDashboard";
     var that = this;
     await axios({
       method: 'POST',
@@ -33,7 +33,7 @@ class ViewShift extends React.Component {
     }).then(function (response) {
         if (response.data.response_code == "200"){
           console.log(response.data.data)
-          that.setState({ shiftData : response.data.data})
+          that.setState({ leaveRequestDash : response.data.data})
         } else {
           toast.error("Failed !" , {
             autoClose: 3000,
@@ -88,7 +88,9 @@ class ViewShift extends React.Component {
         default: return 'primary'
       }
     }
-    const fields = ['Staff','Fromdate','Todate',,'Reason','Discreption', 'Status','Remove']
+
+
+    const fields = ['Staff','FromDate','ToDate',,'Reason','Discreption', 'Status','Remove']
     return (
       <>
         <CRow>
@@ -99,7 +101,7 @@ class ViewShift extends React.Component {
               </CCardHeader>
               <CCardBody>
               <CDataTable
-                items={this.state.shiftData}
+                items={this.state.leaveRequestDash}
                 fields={fields}
                 hover
                 striped

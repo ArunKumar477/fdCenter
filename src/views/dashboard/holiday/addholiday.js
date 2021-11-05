@@ -26,7 +26,7 @@ class AddHoliday extends Component{
       super(props);
       this.state = {
         name:'',
-        doj:'',
+        holiday_date:'',
       }
   }
 setAddUser = (e) => {
@@ -35,16 +35,16 @@ setAddUser = (e) => {
   });
 }
 addHoliday = () => {
-  var { name,doj } = this.state;
+  var { name,holiday_date } = this.state;
   if(name === ""){
-    toast.warn("Please enter Your Employee Name" , {
+    toast.warn("Please enter Your Holiday Name" , {
                   autoClose: 3000,
                   hideProgressBar: true,
                   });
     return false;
   }
-  if(doj === ""){
-    toast.warn("please Select Joining Date" , {
+  if(holiday_date === ""){
+    toast.warn("please Select Date" , {
                   autoClose: 3000,
                   hideProgressBar: true,
                   });
@@ -54,7 +54,7 @@ addHoliday = () => {
   let subURl = "requests.php?type=addHoliday";
       var postJson = {
             name:name,
-              doj:doj,
+            holiday_date:holiday_date,
           }
       axios({
         method: 'POST',
@@ -69,6 +69,7 @@ addHoliday = () => {
               autoClose: 3000,
               hideProgressBar: true,
             });
+            
             return true;
           } else {
             toast.error("Failed !" , {
@@ -114,7 +115,7 @@ addHoliday = () => {
                   <CLabel htmlFor="text-input">Date Of Holiday</CLabel>
                 </CCol>
                 <CCol xs="12" md="9">
-                  <CInput type="date" id="doj" name="doj" onChange={this.setAddUser} value = {this.state.doj} placeholder="date" />
+                  <CInput type="date" id="holiday_date" name="holiday_date" onChange={this.setAddUser} value = {this.state.holiday_date} placeholder="date" />
                 </CCol>
               </CFormGroup>
               

@@ -1,4 +1,4 @@
-import React, {Component,useState} from 'react'
+import React, {Component,useState,useEffect} from 'react'
 import 'react-router-dom'
 import {
   CButton,
@@ -23,9 +23,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Common from "../../helper/Common.js";
 //import FileBase64 from './react-file-base64.js';
+import { useHistory } from "react-router";
+
 
 
 const AddStudent = ()=> {
+  const history = useHistory();
 
   const [gender,setGender] = useState('');  
   const [name,setName] = useState('');  
@@ -40,6 +43,31 @@ const AddStudent = ()=> {
   const [age,setAge] = useState('');  
   const [height,setHeight] = useState('');  
   const [weight,setWeight] = useState('');  
+  const [password, setPassword] = useState('');
+  const [baseImage, setBaseImage] = useState("");
+
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    console.log(base64)
+    setBaseImage(base64);
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    });
+  };
+
 
 
 const addStudentfApi = async () =>{
@@ -50,13 +78,20 @@ const addStudentfApi = async () =>{
                   });
     return false;
   }
-  if(empid === ""){
-    toast.warn("Please enter Your Employee Code" , {
+  // if(empid === ""){
+  //   toast.warn("Please enter Your Employee Code" , {
+  //                 autoClose: 3000,
+  //                 hideProgressBar: true,
+  //                 });
+  //   return false;
+  // }
+  if(password === ""){
+    toast.warn("Please enter Your Password" , {
                   autoClose: 3000,
                   hideProgressBar: true,
                   });
-    return false;
-  }
+      return false;
+}
   if(doj === ""){
     toast.warn("please Select Joining Date" , {
                   autoClose: 3000,
@@ -123,7 +158,7 @@ const addStudentfApi = async () =>{
   let subURl = "requests.php?type=addUser";
   var postJson = {
         name:name,
-        empid : empid,
+        password:password,
         email:email,
         mobile: mobile,
         gender:gender,
@@ -134,7 +169,8 @@ const addStudentfApi = async () =>{
         bloodGorup:bloodGorup,
         age:age,
         height:height,
-        weight:weight
+        weight:weight,
+        image:baseImage
       }
       
   axios({
@@ -145,13 +181,29 @@ const addStudentfApi = async () =>{
     data: postJson
   }).then(function (response) {
     //console.log(JSON.stringify(response))
+    //alert(JSON.stringify(response))
 
       if (response.data.response_code === 200){
         toast.success("Data Saved!", {
           autoClose: 3000,
           hideProgressBar: true,
         });
-        return false;
+          setName('');
+          setEmpid('');
+          setMobile('');
+          setDoj('');
+          setPostalcode('');
+          setAddress('');
+          setEmail('');
+          setGender('');
+          setAgeGroup('');
+          setBloodGorup('');
+          setAge('');
+          setHeight('');
+          setWeight('');
+          setPassword('');
+          setBaseImage('');
+          return false;
       }else {
         toast.error("Failed !" , {
           autoClose: 3000,
@@ -161,6 +213,29 @@ const addStudentfApi = async () =>{
   });
 }
 
+useEffect(()=>{
+
+  let subURl = "requests.php?type=getRollId";
+  var postJson = {
+        tblName:"user"
+      }
+
+  axios({
+    method: 'POST',
+    url: Common.baseURl+subURl,
+    mode: 'no-cors',
+    headers: {'Content-Type':'application/json'},
+    data: postJson
+  }).then(function (response) {
+    //console.log(JSON.stringify(response))
+      if (response.data.response_code === 200){
+        setEmpid(response.data.data)
+      }else {
+
+      }
+  });      
+
+},[])
 
   return (
     <>
@@ -212,11 +287,26 @@ const addStudentfApi = async () =>{
                   <CInput 
                       id="empid" 
                       name="empid" 
-                      onChange={e => setEmpid(e.target.value)} 
+                      //onChange={e => setEmpid(e.target.value)} 
                       value = {empid} 
-                      placeholder="Role ID" />
+                      placeholder="Role ID" 
+                      readOnly
+                      />
                 </CCol>
               </CFormGroup>
+
+              <CFormGroup row>
+                <CCol md="3">
+                <CLabel htmlFor="text-input">Password</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput 
+                    id="password" 
+                    name="password" 
+                    onChange={e => setPassword(e.target.value)}  
+                    value = {password} placeholder="Password" />
+                  </CCol>
+                </CFormGroup>              
 
               <CFormGroup row>
                 <CCol md="3">
@@ -231,7 +321,6 @@ const addStudentfApi = async () =>{
                   </CSelect>
                 </CCol>
               </CFormGroup>
-
 
               <CFormGroup row>
                 <CCol md="3">
@@ -446,7 +535,21 @@ const addStudentfApi = async () =>{
                       value = {address}
                     />
                 </CCol>
+
               </CFormGroup>
+              <CFormGroup row>
+                <CCol md="3">
+                  <CLabel htmlFor="text-input">Image</CLabel>
+                </CCol>
+                <CCol xs="12" md="9">
+                  <CInputFile
+                   type="file"
+                   onChange={(e) => {
+                     uploadImage(e);
+                   }}
+                  />
+                </CCol>
+              </CFormGroup>   
 
               {/* <CFormGroup row>
                 <CCol md="3">
@@ -458,11 +561,10 @@ const addStudentfApi = async () =>{
                    name = "baseImage"
                    id = "baseImage"
                    onChange={e => setImage(e.target.value)}
-
                   />
-
                 </CCol>
               </CFormGroup> */}
+
               </CForm>
             </CCardBody>
             <CCardFooter className="text-right">

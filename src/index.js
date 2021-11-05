@@ -7,10 +7,10 @@ import App from './App';
 import { icons } from './assets/icons'
 
 import { Provider } from 'react-redux'
-import store from './store'
+import configureStore from './redux/store'
 
-React.icons = icons
-
+React.icons = icons;
+const store = configureStore();
 ReactDOM.render(
   <Provider store={store}>
     <App/>

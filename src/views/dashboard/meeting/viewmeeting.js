@@ -20,20 +20,18 @@ const ViewStaff = () => {
 
   useEffect (()=>{
     var postJson = {
-        user_id:'1'
+      staffId:'1'
       }
-      let subURl = "requests.php?type=view_meeting";
+      let subURl = "requests.php?type=view_staff_dashboard_meeting";
       axios({
         method: 'POST',
         url: Common.baseURl+subURl,
         mode: 'no-cors',
         headers: {'Content-Type':'application/json'},
         data: postJson
-
       }).then(function (response) {
           if (response.data.response_code === "200"){
             setMeetingData(response.data.data);
-
           } else {
             toast.error("Failed !" , {
               autoClose: 3000,
@@ -122,14 +120,14 @@ const ViewStaff = () => {
         return 'primary'
     }
 
-    const fields = ['MeetingId','Url','Password','StartTime','Duration','View']
+    const fields = ['SubjectName','MeetingId','passwordUrl','StartTime','EndTime','Duration','View']
     return (
       <>
         <CRow>
           <CCol>
             <CCard>
               <CCardHeader>
-                User Table
+                Upcoming Metting Table
               </CCardHeader>
               <CCardBody>
               <CDataTable

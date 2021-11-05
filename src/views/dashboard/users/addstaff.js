@@ -1,4 +1,4 @@
-import React, {Component,useState} from 'react'
+import React, {Component,useState,useEffect} from 'react'
 import 'react-router-dom'
 import {
   CButton,
@@ -37,15 +37,36 @@ const Addstaff = ()=> {
   const [postalcode,setPostalcode] = useState('');  
   const [address,setAddress] = useState('');  
   const [email,setEmail] = useState('');  
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState(true);
   const [qualification, setQualification] = useState('');
   const [designation, setDesignation] = useState('');
   const [role, setRole] = useState('');
+  const [password, setPassword] = useState('');
+  const [baseImage, setBaseImage] = useState("");
 
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    console.log(base64)
+    setBaseImage(base64);
+  };
 
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
 
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
 
-const addStaffApi = async () =>{
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    });
+  };
+
+  const addStaffApi = async () =>{
   if(name === ""){
     toast.warn("Please enter Your Staff Name" , {
                   autoClose: 3000,
@@ -53,13 +74,14 @@ const addStaffApi = async () =>{
                   });
     return false;
   }
-  if(empid === ""){
-    toast.warn("Please enter Your Employee Code" , {
+
+  if(password === ""){
+    toast.warn("Please enter Your Password" , {
                   autoClose: 3000,
                   hideProgressBar: true,
                   });
-    return false;
-  }
+      return false;
+}
   if(doj === ""){
     toast.warn("please Select Joining Date" , {
                   autoClose: 3000,
@@ -74,6 +96,8 @@ const addStaffApi = async () =>{
                     });
         return false;
   }
+
+
 /*  else if (email !== "") {
     var email_pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (email_pattern.test(email))	{
@@ -126,15 +150,17 @@ const addStaffApi = async () =>{
   var postJson = {
         name:name,
         empid : empid,
+        password:password,
         email:email,
         mobile: mobile,
-        //gender:gender,
+        gender:gender,
         postalcode:postalcode,
         address:address,
         doj:doj,
         qualification:qualification,
         designation:designation,
-        role:role
+        role:role,
+        image:baseImage
       }
       // alert(JSON.stringify(postJson))
       // return false;
@@ -150,7 +176,19 @@ const addStaffApi = async () =>{
           autoClose: 3000,
           hideProgressBar: true,
         });
-        history.push('/addstaff')
+          setName('');
+          setEmpid('');
+          setMobile('');
+          setDoj('');
+          setPostalcode('');
+          setAddress('');
+          setEmail('');
+          setGender('');
+          setQualification('');
+          setDesignation('');
+          setRole('');
+          setPassword('');
+          setBaseImage('');
       }else {
         toast.error("Failed !" , {
           autoClose: 3000,
@@ -159,7 +197,30 @@ const addStaffApi = async () =>{
       }
   });
 }
+useEffect(()=>{
 
+  let subURl = "requests.php?type=getRollId";
+  var postJson = {
+        tblName:"staff"
+      }
+
+  axios({
+    method: 'POST',
+    url: Common.baseURl+subURl,
+    mode: 'no-cors',
+    headers: {'Content-Type':'application/json'},
+    data: postJson
+  }).then(function (response) {
+    //console.log(JSON.stringify(response))
+    //alert(JSON.stringify(response.data.data))
+      if (response.data.response_code === 200){
+        setEmpid(response.data.data)
+      }else {
+
+      }
+  });      
+
+},[])
 
   return (
     <>
@@ -205,17 +266,32 @@ const addStaffApi = async () =>{
 
               <CFormGroup row>
                 <CCol md="3">
-                  <CLabel htmlFor="text-input">Employee Code</CLabel>
+                  <CLabel htmlFor="text-input">Staff Id</CLabel>
                 </CCol>
                 <CCol xs="12" md="9">
                   <CInput 
                       id="empid" 
                       name="empid" 
-                      onChange={e => setEmpid(e.target.value)} 
+                      //onChange={e => setEmpid(e.target.value)} 
                       value = {empid} 
-                      placeholder="Employee Code" />
+                      placeholder="Staff Id"  readOnly/>
                 </CCol>
               </CFormGroup>
+
+
+              <CFormGroup row>
+                <CCol md="3">
+                <CLabel htmlFor="text-input">Password</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput 
+                    id="password" 
+                    name="password" 
+                    onChange={e => setPassword(e.target.value)}  
+                    value = {password} placeholder="Password" />
+                  </CCol>
+                </CFormGroup>
+
 
 
               <CFormGroup row>
@@ -230,16 +306,7 @@ const addStaffApi = async () =>{
                      value = {doj} placeholder="date" />
                 </CCol>
               </CFormGroup>
-              {/*<CFormGroup row>
-                <CCol md="3">
-
-                  <CLabel htmlFor="text-input">Password</CLabel>
-                </CCol>
-                <CCol xs="12" md="9">
-                  <CInput id="password" name="password" onChange={this.setAddUser} value = {this.state.password} placeholder="Password" />
-                </CCol>
-              </CFormGroup>
-
+              {/*
               <CFormGroup row>
                 <CCol md="3">
                   <CLabel htmlFor="text-input">Email</CLabel>
@@ -292,20 +359,21 @@ const addStaffApi = async () =>{
                   <CFormGroup variant="custom-radio" inline>
                     <CInputRadio custom 
                     id="inline-radio1" 
-                      name="male" 
-                      checked={gender === 'Male'}
-                       value="Male"
-                       onClick={() => setGender('Male')}
+                      name="gender" 
+                      checked={gender === "male" ? true : false}
+                       value="male"
+                       onChange={() =>setGender({ gender: true })}
                     />
                     <CLabel variant="custom-checkbox" htmlFor="inline-radio1">Male</CLabel>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
                     <CInputRadio custom id="inline-radio2" 
-                      name="female" 
-                        checked={gender === 'Female'}
-                        value="Female" 
-                        onClick={() => setGender('Female')}
+                        name="gender" 
+                        checked={gender === "female" ? true : false}
+                        value="female" 
+                        onChange={() => setGender({ gender: false })}
+                        
                       // value="female" 
                       // onChange={e => setFemale(e.target.value)} 
                       // checked={female === "female" ? true : false}
@@ -419,6 +487,20 @@ const addStaffApi = async () =>{
                     />
                 </CCol>
               </CFormGroup>
+
+              <CFormGroup row>
+                <CCol md="3">
+                  <CLabel htmlFor="text-input">Image</CLabel>
+                </CCol>
+                <CCol xs="12" md="9">
+                  <CInputFile
+                   type="file"
+                   onChange={(e) => {
+                     uploadImage(e);
+                   }}
+                  />
+                </CCol>
+              </CFormGroup>              
 
               {/* <CFormGroup row>
                 <CCol md="3">

@@ -14,12 +14,18 @@ const Viewstudent = React.lazy(() => import('./views/dashboard/student/viewstude
 const Addnotes = React.lazy(() => import('./views/dashboard/notes/addnotes'));
 const Viewnotes = React.lazy(() => import('./views/dashboard/notes/viewnotes'));
 
+const Addclass = React.lazy(() => import('./views/dashboard/class/addclass'));
+const Viewclass = React.lazy(() => import('./views/dashboard/class/viewclass'));
+
 const Addleaverequest = React.lazy(() => import('./views/dashboard/leaverequest/addleaverequest'));
 const Viewleaverequest = React.lazy(() => import('./views/dashboard/leaverequest/viewleaverequest'));
 
 
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Charts = React.lazy(() => import('./views/charts/Charts'));
+
+const Addbanner = React.lazy(() => import('./views/dashboard/banner/addbanner'));
+const Viewbanner = React.lazy(() => import('./views/dashboard/banner/viewbanner'));
 
 const Viewuserlog = React.lazy(() => import('./views/dashboard/users/viewuserlog'));
 const Viewcompany = React.lazy(() => import('./views/dashboard/company/viewcompany'));
@@ -49,6 +55,9 @@ const routes = [
   { path: '/addnotes', name: 'Addnotes', component: Addnotes },
   { path: '/viewnotes', name: 'Viewnotes', component: Viewnotes },
 
+  { path: '/addclass', name: 'Addclass', component: Addclass },
+  { path: '/viewclass', name: 'Viewclass', component: Viewclass }, 
+
   { path: '/addholiday', name: 'Addholiday', component: Addholiday },
   { path: '/viewholiday', name: 'Viewholiday', component: Viewholiday },
  
@@ -57,6 +66,9 @@ const routes = [
 
   { path: '/addleaverequest', name: 'Addleaverequest', component: Addleaverequest },
   { path: '/viewleaverequest', name: 'Viewleaverequest', component: Viewleaverequest },
+
+  { path: '/addbanner', name: 'Addbanner', component: Addbanner },
+  { path: '/viewbanner', name: 'Viewbanner', component: Viewbanner },
 
 
   { path: '/addcompany', name: 'Addcompany', component: Addcompany },

@@ -18,22 +18,27 @@ class ViewShift extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      shiftData : []
+      studentData : []
     }
   }
 
-  getShiftTable = async () => {
-    let subURl = "requests.php?type=viewShift";
+  getStudentTable = async () => {
+    let subURl = "requests.php?type=viewStudent";
     var that = this;
+    var postJson = {
+      allStaff:true
+    }
     axios({
       method: 'POST',
       url: Common.baseURl+subURl,
       mode: 'no-cors',
       headers: {'Content-Type':'application/json'},
+      data: postJson
     }).then(function (response) {
         if (response.data.response_code == "200"){
-          console.log(response.data.shiftData)
-          that.setState({ shiftData : response.data.shiftData})
+          console.log(response.data.data)
+          that.setState({ studentData : response.data.data})
+
         } else {
           toast.error("Failed !" , {
             autoClose: 3000,
@@ -44,12 +49,12 @@ class ViewShift extends React.Component {
   }
 
   componentWillMount = () => {
-    this.getShiftTable();
+    this.getStudentTable();
   }
+
   deleteItem(id) {
     let subURl = "requests.php?type=deleteShift";
     var that = this;
-
     var postJson = {
       id:id
     }
@@ -60,8 +65,7 @@ class ViewShift extends React.Component {
       headers: {'Content-Type':'application/json'},
       data:postJson
     }).then(function (response) {
-      that.getShiftTable();
-      console.log(JSON.stringify(response.data.response_code))
+      that.getStudentTable();
         if (response.data.response_code == "200"){
           toast.success("Data Saved!", {
             autoClose: 3000,
@@ -88,7 +92,9 @@ class ViewShift extends React.Component {
         default: return 'primary'
       }
     }
-    const fields = ['Shift','startTime','endTime','role', 'status','Remove']
+
+
+    const fields = ['Name','Gender','Email', 'Age','Height','Weight','BloodGroup','Status','Remove']
     return (
       <>
         <CRow>
@@ -99,7 +105,7 @@ class ViewShift extends React.Component {
               </CCardHeader>
               <CCardBody>
               <CDataTable
-                items={this.state.shiftData}
+                items={this.state.studentData}
                 fields={fields}
                 hover
                 striped

@@ -1,11 +1,8 @@
 import React, { lazy, useState,useEffect } from 'react'
 import {
-  CBadge,
   CButton,
-  CButtonGroup,
   CCard,
   CCardBody,
-  CCardFooter,
   CCardHeader,
   CCol,
   CProgress,
@@ -20,14 +17,12 @@ import {
   CModalFooter
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//import MainChartExample from '../charts/MainChartExample.js'
-import { useSelector } from 'react-redux'
 import _ from 'lodash'
-//import history from '../../history';
 import axios from 'axios';
 import Common from "../helper/Common.js";
+import { useSelector } from 'react-redux'
 
 
 
@@ -35,16 +30,18 @@ const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
 const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
 const Dashboard = props => {
-  const isUser = useSelector(state => _.get(state, 'AuthReducer.isUser', ""))
+  
+  //const isUser = useSelector(state => _.get(state, 'AuthReducer.isUser', ""))
   const fields = ['Name','Reason','FromDate','ToDate','Status']
-  const [tabName,setTblname] = useState("leave");
-  const [open, setOpentab] = useState(false);
+  //const [tabName,setTblname] = useState("leave");
+  //const [open, setOpentab] = useState(false);
   const [leaveRequest,setLeaveRequest] = useState([]);
   const [leaveStatus,setLeaveStatus] = useState([]);
 
- // setState
+  const x = useSelector((state)=>state.loginpageReducer);
+//console.log("dashboard==>", x)
 
-  
+
   //   // console.log('isLoggedIn',isUser);
   //   // if(isUser === true){
   //   //   alert("loggedIn")
@@ -52,7 +49,6 @@ const Dashboard = props => {
   //   //   history.push('/');
   //   //   window.location.reload();
   //   // }
-
   
   const getLeaveRequestStatusTable = async () => {
     let subURl = "requests.php?type=viewLeaveRequestStatus";
@@ -87,6 +83,13 @@ const Dashboard = props => {
       }
     });
   };
+
+
+
+  // props.set_login(props.user_id);
+  // props.set_user_role(props.role_id);
+
+
   useEffect (()=>{
   
     getLeaveRequestStatusTable();
@@ -234,7 +237,7 @@ const  approveLeave = async (id) => {
                             </div>
                             <br />
                             <CRow>
-                              <CCol xs="12" xl="6" lg="6" sm="12" md="12">
+                              <CCol xs="12" xl="6" lg="12" sm="12" md="12">
                                 <CButton
                                   shape="pill"
                                   onClick={() =>
@@ -248,7 +251,7 @@ const  approveLeave = async (id) => {
                                   Approve
                                 </CButton>
                               </CCol>
-                              <CCol xs="12" xl="6" lg="6" sm="12" md="12">
+                              <CCol xs="12" xl="6" lg="12" sm="12" md="12">
                                 <CButton
                                   shape="pill"
                                   onClick={() => {
@@ -548,7 +551,6 @@ const  approveLeave = async (id) => {
                   </tr>
                 </tbody>
               </table>
-
             </CCardBody>
           </CCard>
         </CCol>
@@ -557,4 +559,22 @@ const  approveLeave = async (id) => {
   )
 }
 
-export default Dashboard
+// const mapStateToProps = state => {
+//   return {
+//    user_id : state.loginpageReducer.user_id || '',
+//    role_id : state.loginpageReducer.role_id || '',
+//  }
+// }
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     set_login: (id) => {
+//       dispatch(set_login(id))
+//     },
+//     set_user_role : (role_id) =>{
+//       dispatch(set_user_role(role_id))
+//     }
+//   }
+// }
+// //export default connect(mapStateToProps,null)(Dashboard); 
+// export default connect(mapStateToProps,mapDispatchToProps)(Dashboard); 
+export default Dashboard; 

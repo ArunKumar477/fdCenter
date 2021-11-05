@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react'
+import React, { useState } from 'react'
 import 'react-router-dom'
 import {
   CButton,
@@ -19,70 +19,76 @@ import Common from "../../helper/Common.js"
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import _ from 'lodash'
-import { useSelector,useDispatch} from 'react-redux'
+//import _ from 'lodash'
+import { useDispatch ,useSelector} from 'react-redux'
 import { useHistory } from "react-router";
-import {LoginSatatus} from "../../../action";
-
+import { set_login, set_user_role } from '../../../redux/actions/loginAction';
 
 
 const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-const [mobile,setMobile] = useState('');
-const [password,setPassword] = useState('');
+  const [userID,setUserID] = useState('');
+  const [password, setPassword] = useState('');
+;
+
+  //const checkLogin = useSelector(state=>_.get(state, 'AuthReduser.checkLogin', {} ));
+
+  //const checkLogin = useSelector(state => state.AuthReduser.checkLogin); // Rule 1: call hooks in top-level
+
+  //const login = useSelector((state) => state.login);
+
+  //const login = useSelector((state) => state.login.isAuth);  //get isauth val only
 
 
-const checkLogin = useSelector(state=>_.get(state, 'AuthReduser.checkLogin', {} ));
-
-//const checkLogin = useSelector(state => state.AuthReduser.checkLogin); // Rule 1: call hooks in top-level
 
   const checkLoginApi = () => {
-    if(mobile === ""){
-      toast.warn("Please enter Your Mobile Number" , {
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    });
+    if (userID === "") {
+      toast.warn("Please enter Your UserID Number", {
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
       return false;
     }
     else if (password === "") {
-      toast.warn("Please enter Your Password" , {
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    });
+      toast.warn("Please enter Your Password", {
+        autoClose: 3000,
+        hideProgressBar: true,
+      });
       return false;
     }
     let subURl = "requests.php?type=adminLogin";
-        var postJson = {
-              mobile: mobile,
-              password: password
-            }
-        axios({
-          method: 'POST',
-          url: Common.baseURl+subURl,
-          responseType: 'stream',
-          headers: {'Content-Type':'application/json'},
-          data: postJson
-        })
-        .then(function (response) {
-            //dispatch(LoginSatatus(response.data.userId))
-            //alert(JSON.stringify(LoginSatatus.userId))
-            if (response.data.response_code === "200"){
-              toast.success("Login Success!", {
-                autoClose: 3000,
-                hideProgressBar: true,
-              });
-              history.push('/dashboard')
+    var postJson = {
+      emp_code: userID,
+      password: password
+    }
+    axios({
+      method: 'POST',
+      url: Common.baseURl + subURl,
+      responseType: 'stream',
+      headers: { 'Content-Type': 'application/json' },
+      data: postJson
+    })
+      .then(function (response) {
+        dispatch(set_login(response.data.user_id))
+        dispatch(set_user_role(response.data.role_id))
 
-            }else {
-              toast.error("Login Failed !" , {
-                autoClose: 3000,
-                hideProgressBar: true,
-              });
-            }
-        });
+        //alert(JSON.stringify(LoginSatatus.userId))
+        if (response.data.response_code === "200") {
+          toast.success("Login Success!", {
+            autoClose: 3000,
+            hideProgressBar: true,
+          });
+          history.push('/dashboard')
+
+        } else {
+          toast.error("Login Failed !", {
+            autoClose: 3000,
+            hideProgressBar: true,
+          });
+        }
+      });
   }
-
 
 
   return (
@@ -103,11 +109,11 @@ const checkLogin = useSelector(state=>_.get(state, 'AuthReduser.checkLogin', {} 
                         </CInputGroupText>
                       </CInputGroupPrepend>
                       <CInput type="text"
-                      id= "mobile"
-                      name = "mobile"
-                      value={mobile}
-                      onChange={e => setMobile(e.target.value)}
-                        placeholder="Username" autoComplete="username" />
+                      id= "userID"
+                      name = "userID"
+                      value={userID}
+                      onChange={e => setUserID(e.target.value)}
+                        placeholder="UserID" autoComplete="username" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>

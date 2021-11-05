@@ -26,7 +26,6 @@ import Common from "../../helper/Common.js";
 
 
 const AddStudent = ()=> {
-
   const [leavetype,setLeavetype] = useState('');  
   const [description,setDescription] = useState('');  
   const [from,setFrom] = useState('');  
@@ -77,8 +76,12 @@ const addStudentfApi = async () =>{
             autoClose: 3000,
             hideProgressBar: true,
           });
-        return false;
-      }else {
+          setLeavetype();
+          setDescription();
+          setFrom();
+          setTo();
+
+        }else {
         toast.error("Failed !" , {
           autoClose: 3000,
           hideProgressBar: true,
@@ -136,20 +139,15 @@ const addStudentfApi = async () =>{
                 <CCol md="3">
                   <CLabel htmlFor="text-input">From / To Date</CLabel>
                 </CCol>
-                <CCol xs="12" md="9">
+                <CCol xs="6" md="4">
                   <CInput 
                     type="date" 
                     id="from" name="from"
                      onChange={e => setFrom(e.target.value)} 
                      value = {from} placeholder="date" />
                 </CCol>
-              </CFormGroup>
-             
-              <CFormGroup row>
-                <CCol md="3">
-                  <CLabel htmlFor="text-input">To Date</CLabel>
-                </CCol>
-                <CCol xs="12" md="9">
+
+                <CCol xs="6" md="4">
                   <CInput 
                     type="date" 
                     id="to" name="to"
@@ -157,6 +155,7 @@ const addStudentfApi = async () =>{
                      value = {to} placeholder="date" />
                 </CCol>
               </CFormGroup>
+             
 
              
               </CForm>

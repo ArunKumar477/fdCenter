@@ -10,12 +10,9 @@ import {
   CForm,
   CFormGroup,
   CInput,
-  CInputRadio,
   CLabel,
-  CTextarea,
   CRow,
   CInputFile,
-  CSelect
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios';
@@ -23,22 +20,49 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Common from "../../helper/Common.js";
 //import FileBase64 from './react-file-base64.js';
-import { useHistory } from "react-router";
 
 
 
-const Addnotes = ()=> {
-  const history = useHistory();
+const Addstaff = ()=> {
 
-  const [folder,setFolder] = useState('');  
-  const [weeks,setWeeks] = useState('');  
+  const [topic,settopic] = useState('');  
+  const [baseImage, setBaseImage] = useState('');
+  
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    //console.log(base64)
+    setBaseImage(base64);
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    });
+  };
+
 
   const addImage = async () =>{
-
-  let subURl = "requests.php?type=addFile";
+  /*if(name === ""){
+    toast.warn("Please enter Your Meeting Title" , {
+                  autoClose: 3000,
+                  hideProgressBar: true,
+                  });
+    return false;
+  }*/
+  let subURl = "requests.php?type=addBannerImg";
   var postJson = {
-        folder:folder,
-        weeks:weeks
+        topic:topic,
+        image:baseImage
       }
       // alert(JSON.stringify(postJson))
       // return false;
@@ -50,17 +74,15 @@ const Addnotes = ()=> {
     data: postJson
   }).then(function (response) {
       if (response.data.response_code === 200){
-        setFolder('');
-        setWeeks('');
-        history.push("/viewnotes");
-      }else if(response.data.response_code === 409) {
-        setFolder('');
-        alert(JSON.stringify(response.data.response_message))
-      }else{
-        alert(JSON.stringify(response.data.response_message))
+
+        //window.location.reload();
+      }else {
+
       }
   });
+  
 }
+
 
   return (
     <>
@@ -68,36 +90,39 @@ const Addnotes = ()=> {
         <CCol xs="12" md="12">
           <CCard>
             <CCardHeader>
-              Add Notes
+              Create Meeting
             </CCardHeader>
             <CCardBody>
               <CForm action="" method="post" encType="multipart/form-data" className="form-horizontal">
 
               <CFormGroup row>
                 <CCol md="3">
-                  <CLabel htmlFor="text-input">Folder Name</CLabel>
+                  <CLabel htmlFor="text-input">Title Name</CLabel>
                 </CCol>
                 <CCol xs="12" md="9">
                   <CInput 
-                  id="folder"
-                  name="folder"
-                  onChange={e => setFolder(e.target.value)} 
-                  value = {folder} placeholder="Title Name" />
+                  id="topic" 
+                  name="topic" 
+                  onChange={e => settopic(e.target.value)} 
+                  value = {topic} placeholder="Title Name" />
                 </CCol>
               </CFormGroup>
-
+            
+              
               <CFormGroup row>
                 <CCol md="3">
-                  <CLabel htmlFor="text-input">Number Of Weeks</CLabel>
+                  <CLabel htmlFor="text-input">Image</CLabel>
                 </CCol>
                 <CCol xs="12" md="9">
-                  <CInput 
-                  id="weeks" 
-                  name="weeks" 
-                  onChange={e => setWeeks(e.target.value)} 
-                  value = {weeks} placeholder="Number Of Weeks" />
+                  <CInputFile
+                   type="file"
+                   onChange={(e) => {
+                     uploadImage(e);
+                   }}
+                  />
                 </CCol>
-              </CFormGroup>
+              </CFormGroup>    
+
              
               </CForm>
             </CCardBody>
@@ -115,4 +140,4 @@ const Addnotes = ()=> {
     </>
   )
 }
-export default Addnotes
+export default Addstaff

@@ -1,4 +1,4 @@
-import React, {Component,useState} from 'react'
+import React, {useState} from 'react'
 import 'react-router-dom'
 import {
   CButton,
@@ -27,39 +27,42 @@ import { useHistory } from "react-router";
 
 
 
-const Addnotes = ()=> {
+const Addclass = ()=> {
   const history = useHistory();
 
-  const [folder,setFolder] = useState('');  
-  const [weeks,setWeeks] = useState('');  
+  const [className,setClassName] = useState('');  
+  const [role,setRole] = useState('');  
 
-  const addImage = async () =>{
+  const AddclassFun = async () =>{
 
-  let subURl = "requests.php?type=addFile";
+  let subURl = "requests.php?type=addClass";
+  const staffId = 2;
   var postJson = {
-        folder:folder,
-        weeks:weeks
+        className:className,
+        role:role,
+        staffId:staffId
       }
       // alert(JSON.stringify(postJson))
       // return false;
-  axios({
-    method: 'POST',
-    url: Common.baseURl+subURl,
-    mode: 'no-cors',
-    headers: {'Content-Type':'application/json'},
-    data: postJson
-  }).then(function (response) {
-      if (response.data.response_code === 200){
-        setFolder('');
-        setWeeks('');
-        history.push("/viewnotes");
-      }else if(response.data.response_code === 409) {
-        setFolder('');
-        alert(JSON.stringify(response.data.response_message))
-      }else{
-        alert(JSON.stringify(response.data.response_message))
+      if (className != "" ) {
+        axios({
+          method: 'POST', 
+          url: Common.baseURl+subURl,
+          mode: 'no-cors',
+          headers: {'Content-Type':'application/json'},
+          data: postJson
+        }).then(function (response) {
+            if (response.data.response_code === 200){
+              setClassName('');
+              setRole('');
+            }else{
+              alert(JSON.stringify(response.data.response_message))
+            }
+        });
+      } else {
+        alert(0)
       }
-  });
+
 }
 
   return (
@@ -68,42 +71,44 @@ const Addnotes = ()=> {
         <CCol xs="12" md="12">
           <CCard>
             <CCardHeader>
-              Add Notes
+              Add Class
             </CCardHeader>
             <CCardBody>
               <CForm action="" method="post" encType="multipart/form-data" className="form-horizontal">
 
               <CFormGroup row>
                 <CCol md="3">
-                  <CLabel htmlFor="text-input">Folder Name</CLabel>
+                  <CLabel htmlFor="text-input">Class Name</CLabel>
                 </CCol>
                 <CCol xs="12" md="9">
                   <CInput 
-                  id="folder"
-                  name="folder"
-                  onChange={e => setFolder(e.target.value)} 
-                  value = {folder} placeholder="Title Name" />
+                  id="className"
+                  name="className"
+                  onChange={e => setClassName(e.target.value)} 
+                  value = {className} placeholder="Class Name" />
                 </CCol>
               </CFormGroup>
 
               <CFormGroup row>
                 <CCol md="3">
-                  <CLabel htmlFor="text-input">Number Of Weeks</CLabel>
+                  <CLabel htmlFor="text-input">Role</CLabel>
                 </CCol>
                 <CCol xs="12" md="9">
-                  <CInput 
-                  id="weeks" 
-                  name="weeks" 
-                  onChange={e => setWeeks(e.target.value)} 
-                  value = {weeks} placeholder="Number Of Weeks" />
+                <CSelect custom name="role" id="role" onChange={e => setRole(e.target.value)}  value = {role} >
+                  <option value="0">Please select</option>
+                  <option value="3" selected >Kids</option>
+                  <option value="4">Teen</option>
+                  <option value="5">Adults</option>
+                </CSelect>
                 </CCol>
               </CFormGroup>
-             
+
+
               </CForm>
             </CCardBody>
             <CCardFooter className="text-right">
               <CButton type="submit" size="sm" color="primary"
-                onClick = {()=> addImage()}
+                onClick = {()=> AddclassFun()}
               ><CIcon name="cil-scrubber"  /> Submit</CButton>
               &nbsp;&nbsp;
               <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban" /> Reset</CButton>
@@ -115,4 +120,4 @@ const Addnotes = ()=> {
     </>
   )
 }
-export default Addnotes
+export default Addclass
